@@ -9,10 +9,10 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 8080;
 
-const moviesRoute = require("./routes/movies");
-const actorsRoute = require("./routes/actors");
-const usersRoute = require("./routes/user");
-const watchlistRoute = require('./routes/watchlist');
+const moviesRoute = require("./src/routes/movies");
+const actorsRoute = require("./src/routes/actors");
+const usersRoute = require("./src/routes/user");
+const watchlistRoute = require('./src/routes/watchlist');
 
 mongoose.connect(
   `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@cluster1.9zh46aw.mongodb.net/?retryWrites=true&w=majority`, 
