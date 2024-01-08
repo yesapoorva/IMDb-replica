@@ -61,30 +61,28 @@ router.get('/watchlist', requireSignin, signoutTokenRevoke, async (req,res) => {
 });
 
 router.delete('/remove-from-watchlist', requireSignin, signoutTokenRevoke, async (req, res) => {
-    try{
+  try {
+      const { movieId } = req.body;
+      const userId = req.user._id;
 
-        const {movieId} = req.body;
-        const userId = req.user._id;
+      const user = await User.findById(userId);
 
-        const user = await User.findById(userId);
+      if (!user) {
+          return res.status(400).json({ message: 'User not found' });
+      }
 
-        if(!user){
-            res.status(400).json({message: 'user not found'});
-        };
+      if (!user.watchlist.includes(movieId)) {
+          return res.status(400).json({ message: 'Movie not found in watchlist' });
+      }
 
-        if(!user.watchlist.includes(movieId)){
-            res.status(400).json({message: 'Movie not found'});
-        };
+      user.watchlist.pull(movieId);
+      await user.save();
 
-        user.watchlist.pull(movieId);
-        await user.save();
-
-        res.status(200).json({message: 'Movie removed successfully '});
-
-    }catch(err){
-        console.log(err);
-        res.status(500).json({message: "something went wrong"});
-    }
-})
+      res.status(200).json({ message: 'Movie removed successfully' });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Something went wrong' });
+  }
+});
 
 module.exports = router;
