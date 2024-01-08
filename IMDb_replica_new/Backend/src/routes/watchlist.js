@@ -7,15 +7,13 @@ const { requireSignin, signoutTokenRevoke } = require('../controller/user');
 
 router.post('/add-to-watchlist', requireSignin,  signoutTokenRevoke, async (req, res) => {
   try {
-    // const { movieId } = req.body;
-    const { title } = req.body;
-    console.log(req.user);
+    const { movieId } = req.body;
+    // const { title } = req.body;
 
     const userId = req.user._id; 
-    console.log(userId);
 
-    // const movie = await Movie.findById(movieId);
-    const movie = await Movie.findOne({title: title});
+    const movie = await Movie.findById(movieId);
+    // const movie = await Movie.findOne({title: title});
 
     if (!movie) {
       return res.status(404).json({ message: 'Movie not found' });
@@ -25,6 +23,14 @@ router.post('/add-to-watchlist', requireSignin,  signoutTokenRevoke, async (req,
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isMovieInWatchlist = user.watchlist.some(watchedMovie => {
+      return watchedMovie._id.toString() === movieId.toString();
+    });
+    
+    if (isMovieInWatchlist) {
+      return res.status(400).json({ message: 'Movie already in watchlist' });
     }
 
     user.watchlist.push(movie);
